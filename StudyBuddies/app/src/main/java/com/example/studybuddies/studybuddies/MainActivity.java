@@ -1,8 +1,11 @@
 package com.example.studybuddies.studybuddies;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
@@ -19,7 +22,10 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements  NavigationView.OnNavigationItemSelectedListener,
+                    CourseFragment.OnFragmentInteractionListener,
+                    GroupFragment.OnFragmentInteractionListener,
+                    ProfileFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,26 +91,37 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        ViewGroup sceneRoot = (ViewGroup) findViewById(R.id.scene_root);
-        Transition trans = new AutoTransition();
-        Scene profile_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_profile, this);
-        Scene group_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_group, this);
-        Scene course_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_course, this);
-
+        Fragment fragment = null;
+        Class fragmentClass = null;
         if (id == R.id.nav_profile) {
-            TransitionManager.go(profile_scene, trans);
+            fragmentClass = ProfileFragment.class;
         } else if (id == R.id.nav_courses) {
-            TransitionManager.go(course_scene, trans);
+            fragmentClass = CourseFragment.class;
         } else if (id == R.id.nav_groups) {
-            TransitionManager.go(group_scene, trans);
-        }  else if (id == R.id.nav_share) {
+            fragmentClass = GroupFragment.class;
+        }  //else if (id == R.id.nav_share) {
+        //} else if (id == R.id.nav_send) {
+        //}
 
-        } else if (id == R.id.nav_send) {
-
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e ) {
+            e.printStackTrace();
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.scene_root,fragment).commit();
+        item.setChecked(true);
+        setTitle(item.getTitle());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
