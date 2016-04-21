@@ -7,7 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +23,23 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class CourseFragment extends Fragment {
+    @Bind(R.id.course_text_view1) TextView course_text_view1;
+
+    @OnClick(R.id.button_course_enroll) void submit(){
+        course_text_view1.setText("User will enroll in course");
+    }
+
+    @OnClick(R.id.button_course_unenroll) void submit2(){
+        course_text_view1.setText("User will unenroll from course");
+    }
+
+    @OnClick(R.id.button_add_course) void submit3(){
+        course_text_view1.setText("User will add a course");
+    }
+
+
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,7 +86,23 @@ public class CourseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_course, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_course, container, false);
+
+        String button_course_enroll_text = "Enroll";
+        String button_course_unenroll_text = "Unenroll";
+        String button_add_course_text = "Add Course";
+
+        Button button_course_enroll = (Button) rootView.findViewById(R.id.button_course_enroll);
+        Button button_course_unenroll = (Button) rootView.findViewById(R.id.button_course_unenroll);
+        Button button_add_course = (Button) rootView.findViewById(R.id.button_add_course);
+
+        button_course_enroll.setText(button_course_enroll_text);
+        button_course_unenroll.setText(button_course_unenroll_text);
+        button_add_course.setText(button_add_course_text);
+
+        ButterKnife.bind(this, rootView);
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
