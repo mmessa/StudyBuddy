@@ -1,12 +1,16 @@
 package com.example.studybuddies.studybuddies;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.transition.AutoTransition;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,12 +22,42 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.firebase.client.Firebase;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements  NavigationView.OnNavigationItemSelectedListener,
+                    CourseFragment.OnFragmentInteractionListener,
+                    GroupFragment.OnFragmentInteractionListener,
+                    ProfileFragment.OnFragmentInteractionListener,
+                    GoogleApiClient.OnConnectionFailedListener{
+
+    private static final String TAG = "MainActivity";
+
+    public static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Firebase connection
+        Firebase.setAndroidContext(this);
+        Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
+        myFirebaseRef.child("message").setValue("This is text!");
+        //myFirebaseRef.
+
+        // Google Api Client and Google Sign-in
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                .build();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,26 +119,43 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        ViewGroup sceneRoot = (ViewGroup) findViewById(R.id.scene_root);
-        Transition trans = new AutoTransition();
-        Scene profile_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_profile, this);
-        Scene group_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_group, this);
-        Scene course_scene = Scene.getSceneForLayout(sceneRoot, R.layout.fragment_course, this);
-
+        Fragment fragment = null;
+        Class fragmentClass = null;
         if (id == R.id.nav_profile) {
-            TransitionManager.go(profile_scene, trans);
+            fragmentClass = ProfileFragment.class;
         } else if (id == R.id.nav_courses) {
-            TransitionManager.go(course_scene, trans);
+            fragmentClass = CourseFragment.class;
         } else if (id == R.id.nav_groups) {
-            TransitionManager.go(group_scene, trans);
-        }  else if (id == R.id.nav_share) {
+            fragmentClass = GroupFragment.class;
+        }  //else if (id == R.id.nav_share) {
+        //} else if (id == R.id.nav_send) {
+        //}
 
-        } else if (id == R.id.nav_send) {
-
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e ) {
+            e.printStackTrace();
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.scene_root,fragment).commit();
+        item.setChecked(true);
+        setTitle(item.getTitle());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
+    }
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG,"onConnectionFailed:" + connectionResult);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
