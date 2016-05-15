@@ -109,11 +109,9 @@ public class CourseFragment extends Fragment {
                     int course_number_value = Integer.parseInt(course_number_value_string);
                     String course_name_and_number = course_name_value + "-" + course_number_value_string;
 
-                    Firebase new_course = firebaseRef.child("Course");
-                    HashMap<String, Course> course_list = new HashMap<>();
+                    Firebase new_course = firebaseRef.child("Course").child(course_name_and_number);
                     Course course_to_add = new Course(rand.nextInt(1000), course_name_value, course_number_value);
-                    course_list.put(course_name_and_number, course_to_add);
-                    new_course.setValue(course_list);
+                    new_course.setValue(course_to_add);
                 }
             }
         });
@@ -126,6 +124,8 @@ public class CourseFragment extends Fragment {
                     Course course_in_db = dataSnapshot.getValue(Course.class);
 
                    System.out.println(course_in_db.getCourseName());
+                   System.out.println(course_in_db.getCourseNum());
+                   System.out.println(course_in_db.getCourseId());
 
             }
 
