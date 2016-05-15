@@ -7,11 +7,14 @@
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
+        android:id="@+id/add_course_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
     <!-- First Row -->
     <LinearLayout
+        android:id="@+id/course_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -29,7 +32,9 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <!-- Second Row -->
     <LinearLayout
+        android:id="@+id/course_number_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -47,6 +52,22 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/course_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/add_course_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Course"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
 
 </FrameLayout>
