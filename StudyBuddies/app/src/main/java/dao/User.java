@@ -21,7 +21,7 @@ public class User {
         this.groupIds = null;
         this.courseIds = null;
     }
-    
+
     public String getName() {
 
         return name;
