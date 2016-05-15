@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.firebase.client.Firebase;
 
@@ -64,24 +66,45 @@ public class CourseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         firebaseRef = new Firebase(FIREBASE_URL);
+         //firebaseRef = new Firebase(FIREBASE_URL);
 
-         Random rand = new Random();
-         String name = "CSCI";
-         int number = 567;
-         String name_number = name + number;
+         //Random rand = new Random();
+         //String name = "CSCI";
+        // int number = 567;
+         //String name_number = name + number;
 
-        Firebase new_course = firebaseRef.child("Courses").child(name_number);
+        //Firebase new_course = firebaseRef.child("Courses").child(name_number);
 
-         Course csci_567 = new Course(rand.nextInt(1000), name, number);
-         new_course.setValue(csci_567);
+        // Course csci_567 = new Course(rand.nextInt(1000), name, number);
+        // new_course.setValue(csci_567);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_course, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_course, container, false);
+        Button add_course_button = (Button) rootView.findViewById(R.id.add_course_button);
+        final EditText course_name = (EditText) rootView.findViewById(R.id.course_name_edit_text);
+        final EditText course_number = (EditText) rootView.findViewById(R.id.course_number_edit_text);
+
+        add_course_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random rand = new Random();
+                String course_name_value = course_name.getText().toString();
+                String course_number_value_string = course_number.getText().toString();
+                int course_number_value = Integer.parseInt(course_number_value_string);
+                String course_name_and_number = course_name_value + "-" + course_number_value_string;
+
+                firebaseRef = new Firebase(FIREBASE_URL);
+                Firebase new_course = firebaseRef.child("Courses").child(course_name_and_number);
+                Course course_to_add = new Course(rand.nextInt(1000), course_name_value, course_number_value);
+                new_course.setValue(course_to_add);
+            }
+        });
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
