@@ -1,5 +1,7 @@
 package dao;
 
+import java.util.List;
+
 /**
  * Created by mattmessa on 5/3/16.
  */
@@ -8,6 +10,7 @@ public class Course {
     private int courseId;
     private String name;
     private int number;
+    private List groupIds;
 
     public Course(){
 
@@ -30,8 +33,15 @@ public class Course {
         return name;
     }
 
-    int getCourseNum() {
+    int getCourseNumber() {
 
         return number;
     }
+
+    List getCourseGroupIds() {
+
+        return groupIds;
+    }
+
+
 }

@@ -1,23 +1,26 @@
 package dao;
 
+import java.util.List;
+
 /**
  * Created by mattmessa on 5/3/16.
  */
 public class Group {
 
     private int groupId;
+    private int courseId;
     private String name;
-    //private int ;
+    private List userIds;
 
     public Group(){
 
     }
 
-    public Group(int groupId, String name, int courseNum) {
+    public Group(int groupId, int courseId, String name) {
 
         this.groupId = groupId;
+        this.courseId = courseId;
         this.name = name;
-        //this.courseNum = courseNum;
     }
 
     int getGroupId() {
@@ -25,9 +28,19 @@ public class Group {
         return groupId;
     }
 
+    int getGroupCourseId() {
+
+        return courseId;
+    }
+
     String getGroupName() {
 
         return name;
+    }
+
+    List getGroupUserIds() {
+
+        return userIds;
     }
 
 
