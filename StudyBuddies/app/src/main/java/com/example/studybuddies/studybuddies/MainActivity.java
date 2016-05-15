@@ -24,7 +24,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -34,6 +39,8 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+
+import java.util.concurrent.Semaphore;
 
 import dao.User;
 
@@ -52,6 +59,12 @@ public class MainActivity extends AppCompatActivity
 
     private static final int RC_SIGN_IN = 9001;
 
+    public static String userEmail;
+    public static String userName;
+    public static String userId;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         // Firebase connection
         Firebase.setAndroidContext(this);
         Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
-        myFirebaseRef.child("message").child("submessage").setValue("This is text!");
+        //myFirebaseRef.child("message").child("submessage").setValue("This is text!");
 
 
         // Google Api Client and Google Sign-in
@@ -224,12 +237,12 @@ public class MainActivity extends AppCompatActivity
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent,RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -245,6 +258,58 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "acct info:" + acct.getDisplayName());
             Log.d(TAG, "acct info:" + acct.getEmail());
             Log.d(TAG, "acct info:" + acct.getId());
+
+
+            userEmail = acct.getEmail();
+            userName = acct.getDisplayName();
+            userId = acct.getId();
+
+            Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/User");
+            final Query queryRef = ref.orderByChild("email").equalTo(userEmail);
+
+            queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if(snapshot.exists())
+                    {
+                        System.out.printf("snapshot not null\n");
+                    }
+                    else
+                    {
+                        System.out.printf("snapshot is null\n");
+                        User user = new User();
+                        user.setName(userName);
+                        user.setEmail(userEmail);
+
+                        Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
+                        Firebase userRef = myFirebaseRef.child("User").child(userId);
+
+                        userRef.setValue(user);
+
+                    }
+
+
+                }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                }
+            });
+
+            updateUI(true);
+        } else {
+            // Signed out, show unauthenticated UI.
+            updateUI(false);
         }
     }
+
+    private void updateUI(boolean signedIn) {
+        if (signedIn) {
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+
+        }
+    }
+
+
 }
