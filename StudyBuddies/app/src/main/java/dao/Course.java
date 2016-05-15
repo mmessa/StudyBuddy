@@ -6,32 +6,31 @@ package dao;
 public class Course {
 
     private int courseId;
-    private String name;
-    private int number;
+    private String courseName;
+    private int courseNum;
 
     public Course(){
 
     }
 
-    public Course(int courseId, String name, int number) {
+    public Course(int courseId, String courseName, int courseNum) {
 
         this.courseId = courseId;
-        this.name = name;
-        this.number = number;
+        this.courseName = courseName;
+        this.courseNum = courseNum;
     }
 
-    int getCourseId() {
+    public int getCourseId() {
 
         return courseId;
     }
 
-    String getCourseName() {
-
-        return name;
+    public String getCourseName() {
+        return courseName;
     }
 
-    int getCourseNum() {
+    public int getCourseNum() {
 
-        return number;
+        return courseNum;
     }
 }

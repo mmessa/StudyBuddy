@@ -4,14 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pools;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+import com.google.android.gms.common.Scopes;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import dao.Course;
@@ -28,6 +37,7 @@ import dao.Course;
 public class CourseFragment extends Fragment {
 
     private static final String FIREBASE_URL = "https://vivid-heat-5794.firebaseio.com/";
+    private static final String FIREBASE_COURSE_URL = "https://vivid-heat-5794.firebaseio.com/Course";
     private Firebase firebaseRef;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -87,6 +97,7 @@ public class CourseFragment extends Fragment {
         Button add_course_button = (Button) rootView.findViewById(R.id.add_course_button);
         final EditText course_name = (EditText) rootView.findViewById(R.id.course_name_edit_text);
         final EditText course_number = (EditText) rootView.findViewById(R.id.course_number_edit_text);
+        firebaseRef = new Firebase(FIREBASE_URL);
 
         add_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,11 +109,44 @@ public class CourseFragment extends Fragment {
                     int course_number_value = Integer.parseInt(course_number_value_string);
                     String course_name_and_number = course_name_value + "-" + course_number_value_string;
 
-                    firebaseRef = new Firebase(FIREBASE_URL);
-                    Firebase new_course = firebaseRef.child("Courses").child(course_name_and_number);
+                    Firebase new_course = firebaseRef.child("Course");
+                    HashMap<String, Course> course_list = new HashMap<>();
                     Course course_to_add = new Course(rand.nextInt(1000), course_name_value, course_number_value);
-                    new_course.setValue(course_to_add);
+                    course_list.put(course_name_and_number, course_to_add);
+                    new_course.setValue(course_list);
                 }
+            }
+        });
+
+        Firebase course_ref = new Firebase(FIREBASE_COURSE_URL);
+
+        course_ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Course course_in_db = dataSnapshot.getValue(Course.class);
+
+                   System.out.println(course_in_db.getCourseName());
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
 
