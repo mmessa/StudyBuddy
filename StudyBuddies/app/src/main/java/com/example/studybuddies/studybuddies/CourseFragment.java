@@ -91,16 +91,18 @@ public class CourseFragment extends Fragment {
         add_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Random rand = new Random();
-                String course_name_value = course_name.getText().toString();
-                String course_number_value_string = course_number.getText().toString();
-                int course_number_value = Integer.parseInt(course_number_value_string);
-                String course_name_and_number = course_name_value + "-" + course_number_value_string;
+                if( (!course_name.getText().toString().equals("")) && (!course_number.getText().toString().equals(""))) {
+                    Random rand = new Random();
+                    String course_name_value = course_name.getText().toString();
+                    String course_number_value_string = course_number.getText().toString();
+                    int course_number_value = Integer.parseInt(course_number_value_string);
+                    String course_name_and_number = course_name_value + "-" + course_number_value_string;
 
-                firebaseRef = new Firebase(FIREBASE_URL);
-                Firebase new_course = firebaseRef.child("Courses").child(course_name_and_number);
-                Course course_to_add = new Course(rand.nextInt(1000), course_name_value, course_number_value);
-                new_course.setValue(course_to_add);
+                    firebaseRef = new Firebase(FIREBASE_URL);
+                    Firebase new_course = firebaseRef.child("Courses").child(course_name_and_number);
+                    Course course_to_add = new Course(rand.nextInt(1000), course_name_value, course_number_value);
+                    new_course.setValue(course_to_add);
+                }
             }
         });
 
