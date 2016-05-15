@@ -8,6 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.Firebase;
+
+import java.util.Random;
+
+import dao.Course;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +24,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class CourseFragment extends Fragment {
+
+    private static final String FIREBASE_URL = "https://vivid-heat-5794.firebaseio.com/";
+    private Firebase firebaseRef;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,10 +63,18 @@ public class CourseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+         firebaseRef = new Firebase(FIREBASE_URL);
+
+         Random rand = new Random();
+         String name = "CSCI";
+         int number = 567;
+         String name_number = name + number;
+
+        Firebase new_course = firebaseRef.child("Courses").child(name_number);
+
+         Course csci_567 = new Course(rand.nextInt(1000), name, number);
+         new_course.setValue(csci_567);
     }
 
     @Override
