@@ -1,5 +1,7 @@
 package com.example.studybuddies.studybuddies;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,9 +26,14 @@ import android.view.ViewGroup;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 
 import dao.User;
 
@@ -35,52 +42,96 @@ public class MainActivity extends AppCompatActivity
                     CourseFragment.OnFragmentInteractionListener,
                     GroupFragment.OnFragmentInteractionListener,
                     ProfileFragment.OnFragmentInteractionListener,
-                    GoogleApiClient.OnConnectionFailedListener{
+                    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
     public static GoogleApiClient mGoogleApiClient;
 
+    private ProgressDialog mProgressDialog;
+
+    private static final int RC_SIGN_IN = 9001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
+
         // Firebase connection
         Firebase.setAndroidContext(this);
         Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
-        myFirebaseRef.child("message").setValue("This is text!");
-        //myFirebaseRef.
+        myFirebaseRef.child("message").child("submessage").setValue("This is text!");
+
 
         // Google Api Client and Google Sign-in
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
 
-        setContentView(R.layout.activity_main);
+        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setScopes(gso.getScopeArray());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        // NAV DRAWER CODE
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+        // END NAV DRAWER CODE
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if(opr.isDone()) {
+            // checks if users cached credentials are valid
+            Log.d(TAG, "Cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        }
+        else {
+            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+
+    private void hideProgressDialog() {
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
+        }
+    }
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage("A message!");
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
     }
 
     @Override
@@ -159,5 +210,41 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+       switch (v.getId()) {
+           case R.id.sign_in_button:
+               signIn();
+               break;
+       }
+
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent,RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if(requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+
+        if (result.isSuccess()) {
+            GoogleSignInAccount acct = result.getSignInAccount();
+            Log.d(TAG, "acct info:" + acct.getDisplayName());
+            Log.d(TAG, "acct info:" + acct.getEmail());
+            Log.d(TAG, "acct info:" + acct.getId());
+        }
     }
 }
