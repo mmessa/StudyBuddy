@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -20,6 +21,7 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.common.Scopes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -76,17 +78,6 @@ public class CourseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         //firebaseRef = new Firebase(FIREBASE_URL);
-
-         //Random rand = new Random();
-         //String name = "CSCI";
-        // int number = 567;
-         //String name_number = name + number;
-
-        //Firebase new_course = firebaseRef.child("Courses").child(name_number);
-
-        // Course csci_567 = new Course(rand.nextInt(1000), name, number);
-        // new_course.setValue(csci_567);
     }
 
     @Override
@@ -98,6 +89,11 @@ public class CourseFragment extends Fragment {
         final EditText course_name = (EditText) rootView.findViewById(R.id.course_name_edit_text);
         final EditText course_number = (EditText) rootView.findViewById(R.id.course_number_edit_text);
         firebaseRef = new Firebase(FIREBASE_URL);
+
+        final ArrayList<Course> array_of_courses = new ArrayList<Course>();
+        final CourseAdapter adapter = new CourseAdapter(getActivity(), array_of_courses);
+        final ListView course_list = (ListView) rootView.findViewById(R.id.course_list_view);
+        course_list.setAdapter(adapter);
 
         add_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,11 +117,14 @@ public class CourseFragment extends Fragment {
         course_ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Course course_in_db = dataSnapshot.getValue(Course.class);
 
-                   System.out.println(course_in_db.getCourseName());
-                   System.out.println(course_in_db.getCourseNum());
-                   System.out.println(course_in_db.getCourseId());
+                Course course_in_db = dataSnapshot.getValue(Course.class);
+
+                System.out.println(course_in_db.getCourseName());
+                System.out.println(course_in_db.getCourseNum());
+                System.out.println(course_in_db.getCourseId());
+                
+                adapter.add(course_in_db);
 
             }
 
