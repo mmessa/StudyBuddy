@@ -32,7 +32,9 @@ public class CourseAdapter extends ArrayAdapter<Course> {
         TextView course_number = (TextView) convertView.findViewById(R.id.course_number);
 
         course_name.setText(course.getCourseName());
-       // course_number.setText(course.getCourseNum());
+        //int course_number_int = course.getCourseNum();
+        String course_number_string = Integer.toString(course.getCourseNum());
+        course_number.setText(course_number_string);
 
         return convertView;
     }

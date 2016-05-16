@@ -123,9 +123,8 @@ public class CourseFragment extends Fragment {
                 System.out.println(course_in_db.getCourseName());
                 System.out.println(course_in_db.getCourseNum());
                 System.out.println(course_in_db.getCourseId());
-                
-                adapter.add(course_in_db);
 
+                adapter.add(course_in_db);
             }
 
             @Override
