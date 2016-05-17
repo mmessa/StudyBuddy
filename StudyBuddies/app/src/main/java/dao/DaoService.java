@@ -21,10 +21,12 @@ public class DaoService {
     private int nextGroupNumber;
     private int nextCourseNumber;
 
+    //constructor
     public DaoService() {
 
     }
 
+    //adds listener to the course node on firebase and maintains a list of course objects in the db
     public void addCourseListListener() {
 
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/Course");
@@ -55,6 +57,7 @@ public class DaoService {
         });
     }
 
+    //adds listener to the group node on firebase and maintains a list of group objects in the db
     public void addGroupListListener() {
 
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/Group");
@@ -85,6 +88,7 @@ public class DaoService {
         });
     }
 
+    //adds a listener to maintain the next groupId. used when getting next group id for group creation
     public void addNextGroupNumberListener() {
 
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com").child("NextGroupNumber");
@@ -112,6 +116,7 @@ public class DaoService {
         });
     }
 
+    //adds a listener to maintain the next courseId. used when getting next course id for course creation
     public void addNextCourseNumberListener() {
         Firebase ref2 = new Firebase("https://vivid-heat-5794.firebaseio.com/NextCourseNumber");
         ref2.addValueEventListener(new ValueEventListener() {
@@ -126,8 +131,6 @@ public class DaoService {
                 {
                     nextCourseNumber = 0;
                 }
-
-
             }
 
             @Override
@@ -137,6 +140,7 @@ public class DaoService {
         });
     }
 
+    //returns the next group id
     public int getNextGroupNumber() {
 
         int nextNum = nextGroupNumber;
@@ -147,6 +151,7 @@ public class DaoService {
          return nextNum;
     }
 
+    //returns the next course id
     public int getNextCourseNumber() {
 
         int nextNum = nextCourseNumber;
@@ -157,7 +162,9 @@ public class DaoService {
         return nextNum;
     }
 
-    //adds group id to user list and user id to group list
+    //joins group
+    //adds group id to users' group list and user id to group's user list
+    //pass in the group id of the group you want the user to be added to
     public void joinGroup(final int groupId) {
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/Group");
         final Query queryRef = ref.orderByChild("groupId").equalTo(groupId);
@@ -223,6 +230,9 @@ public class DaoService {
         });
     }
 
+    //joins course
+    //adds user id to course's user list and course id to user's course list
+    //pass in the course id of the course you want the user to be added to
     public void joinCourse(final int courseId) {
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/Course");
         final Query queryRef = ref.orderByChild("courseId").equalTo(courseId);
@@ -288,6 +298,9 @@ public class DaoService {
         });
     }
 
+    //creates a group
+    //pass in name of group and the course id that the group belongs to
+    //updates course's group list with group id
     public void createGroup(String name, int courseId) {
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/");
 
@@ -332,6 +345,8 @@ public class DaoService {
 
     }
 
+    //creates a course
+    //pass in name and number of course
     public void createCourse(String name, int number) {
         Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/");
 
@@ -341,4 +356,16 @@ public class DaoService {
 
         ref.child("Course").child(courseKey.toString()).setValue(course);
     }
+
+    //don't think we need these
+
+/*
+    public Course getCourse(Integer courseId) {
+
+        new Firebase("https://vivid-heat-5794.firebaseio.com/Course/").
+        Course course = new Course();
+
+
+    }
+    */
 }

@@ -120,7 +120,9 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        daoService.addNextCourseNumberListener(); 
+        //sets up listeners to maintain global lists(courses, groups) and
+        // the course & group next ids
+        daoService.addNextCourseNumberListener();
         daoService.addNextGroupNumberListener();
         daoService.addCourseListListener();
         daoService.addGroupListListener();
