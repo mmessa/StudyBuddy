@@ -4,9 +4,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -17,7 +27,9 @@ import android.view.ViewGroup;
  * Use the {@link CourseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseFragment extends Fragment {
+public class CourseFragment extends Fragment
+        implements
+        OnMapReadyCallback{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,7 +39,12 @@ public class CourseFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private GoogleMap mMap;
+
+    private static final LatLng CHICO = new LatLng(39.7285, -121.8375);
+
     private OnFragmentInteractionListener mListener;
+
 
     public CourseFragment() {
         // Required empty public constructor
@@ -58,13 +75,32 @@ public class CourseFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        //SupportMapFragment mapFragment = ((SupportMapFragment) getFragmentManager()
+        //        .findFragmentById(R.id.map));
+        //mapFragment.getMapAsync(this);
+    }
+
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
+
+        if(MainActivity.userLatLng != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(MainActivity.userLatLng));
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_course, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_course, container, false);
+
+        SupportMapFragment mapFragment = ((SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map));
+        mapFragment.getMapAsync(this);
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +140,16 @@ public class CourseFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void setUpMapIfNeeded() {
+        if (mMap != null) {
+            return;
+        }
+        mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        if (mMap == null) {
+            return;
+        }
+
     }
 }
