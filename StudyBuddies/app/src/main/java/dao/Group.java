@@ -21,27 +21,42 @@ public class Group {
         this.groupId = groupId;
         this.courseId = courseId;
         this.name = name;
+        this.userIds = null;
     }
 
-    int getGroupId() {
+    public int getGroupId() {
 
         return groupId;
     }
 
-    int getGroupCourseId() {
+    public int getCourseId() {
 
         return courseId;
     }
 
-    String getGroupName() {
+    public String getName() {
 
         return name;
     }
 
-    List getGroupUserIds() {
+    public List getUserIds() {
 
         return userIds;
     }
 
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
 
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUserIds(List userIds) {
+        this.userIds = userIds;
+    }
 }
