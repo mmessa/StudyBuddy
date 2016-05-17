@@ -28,6 +28,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Logger;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.api.Auth;
@@ -40,8 +41,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import dao.DaoService;
 import dao.User;
 
 public class MainActivity extends AppCompatActivity
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
+    public static DaoService daoService = new DaoService();
     public static GoogleApiClient mGoogleApiClient;
 
     private ProgressDialog mProgressDialog;
@@ -62,7 +67,8 @@ public class MainActivity extends AppCompatActivity
     public static String userEmail;
     public static String userName;
     public static String userId;
-
+    public static List courseList = new ArrayList();
+    public static List groupList = new ArrayList();
 
 
     @Override
@@ -74,7 +80,9 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
         // Firebase connection
+
         Firebase.setAndroidContext(this);
+        //Firebase.getDefaultConfig().setLogLevel(Logger.Level.DEBUG);
         Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
         //myFirebaseRef.child("message").child("submessage").setValue("This is text!");
 
@@ -111,6 +119,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+
+        daoService.addNextCourseNumberListener(); 
+        daoService.addNextGroupNumberListener();
+        daoService.addCourseListListener();
+        daoService.addGroupListListener();
+
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if(opr.isDone()) {
@@ -189,10 +203,28 @@ public class MainActivity extends AppCompatActivity
         Class fragmentClass = null;
         if (id == R.id.nav_profile) {
             fragmentClass = ProfileFragment.class;
+            System.out.println("calling create group");
+
+            daoService.createCourse("Parallel", 551);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            daoService.createGroup("James' Group", 0);
+
+            System.out.printf("%d", MainActivity.courseList.size());
+            System.out.println(MainActivity.courseList);
+
+
         } else if (id == R.id.nav_courses) {
             fragmentClass = CourseFragment.class;
+            daoService.joinCourse(0);
+
+
         } else if (id == R.id.nav_groups) {
             fragmentClass = GroupFragment.class;
+            daoService.joinGroup(0);
         }  //else if (id == R.id.nav_share) {
         //} else if (id == R.id.nav_send) {
         //}
@@ -270,12 +302,9 @@ public class MainActivity extends AppCompatActivity
             queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                    if(snapshot.exists())
-                    {
+                    if (snapshot.exists()) {
                         System.out.printf("snapshot not null\n");
-                    }
-                    else
-                    {
+                    } else {
                         System.out.printf("snapshot is null\n");
                         User user = new User();
                         user.setName(userName);
@@ -290,10 +319,12 @@ public class MainActivity extends AppCompatActivity
 
 
                 }
+
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                 }
             });
+
 
             updateUI(true);
         } else {

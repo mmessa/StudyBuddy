@@ -11,6 +11,7 @@ public class Course {
     private String name;
     private int number;
     private List groupIds;
+    private List userIds;
 
     public Course(){
 
@@ -23,25 +24,48 @@ public class Course {
         this.number = number;
     }
 
-    int getCourseId() {
+    public int getCourseId() {
 
         return courseId;
     }
 
-    String getCourseName() {
+    public String getName() {
 
         return name;
     }
 
-    int getCourseNumber() {
+    public int getNumber() {
 
         return number;
     }
 
-    List getCourseGroupIds() {
+    public List getGroupIds() {
 
         return groupIds;
     }
 
+    public List getUserIds() {
 
+        return userIds;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public void setGroupIds(List groupIds) {
+        this.groupIds = groupIds;
+    }
+
+    public void setUserIds(List userIds) {
+        this.userIds = userIds;
+    }
 }
