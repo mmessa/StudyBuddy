@@ -210,16 +210,16 @@ public class MainActivity extends AppCompatActivity
             fragmentClass = ProfileFragment.class;
             System.out.println("calling create group");
 
-            daoService.createCourse("Parallel", 551);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            daoService.createGroup("James' Group", 0);
+            //daoService.createCourse("Parallel", 551);
+            //try {
+            //    Thread.sleep(3000);
+            //} catch (InterruptedException e) {
+             //   e.printStackTrace();
+           // }
+           // daoService.createGroup("James' Group", 0);
 
-            System.out.printf("%d", MainActivity.courseList.size());
-            System.out.println(MainActivity.courseList);
+           // System.out.printf("%d", MainActivity.courseList.size());
+           // System.out.println(MainActivity.courseList);
 
 
         } else if (id == R.id.nav_courses) {
@@ -232,10 +232,10 @@ public class MainActivity extends AppCompatActivity
 
             //Course newCourse = daoService.getQueriedCourse();
 
-            Course newCourse = daoService.getCourse(0);
-            System.out.println("printing retrieved course");
-            System.out.println("1 = " + newCourse);
-            System.out.println("1 = " + newCourse.getName());
+            //Course newCourse = daoService.getCourse(0);
+            //System.out.println("printing retrieved course");
+            //System.out.println("1 = " + newCourse);
+            //System.out.println("1 = " + newCourse.getName());
 
 
         } else if (id == R.id.nav_groups) {
