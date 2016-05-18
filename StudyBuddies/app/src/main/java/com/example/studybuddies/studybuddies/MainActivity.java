@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import dao.Course;
 import dao.DaoService;
 import dao.User;
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     public static String userId;
     public static List courseList = new ArrayList();
     public static List groupList = new ArrayList();
+    public static List userList = new ArrayList();
 
 
     @Override
@@ -120,12 +122,13 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        //sets up listeners to maintain global lists(courses, groups) and
+        //sets up listeners to maintain global lists(courses, groups, users) and
         // the course & group next ids
         daoService.addNextCourseNumberListener();
         daoService.addNextGroupNumberListener();
         daoService.addCourseListListener();
         daoService.addGroupListListener();
+        daoService.addUserListListener();
 
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
@@ -221,12 +224,23 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_courses) {
             fragmentClass = CourseFragment.class;
-            daoService.joinCourse(0);
+            //daoService.joinCourse(0);
+
+
+            //daoService.getCourse(0);
+            //daoService.queryCourse(0);
+
+            //Course newCourse = daoService.getQueriedCourse();
+
+            Course newCourse = daoService.getCourse(0);
+            System.out.println("printing retrieved course");
+            System.out.println("1 = " + newCourse);
+            System.out.println("1 = " + newCourse.getName());
 
 
         } else if (id == R.id.nav_groups) {
             fragmentClass = GroupFragment.class;
-            daoService.joinGroup(0);
+            //daoService.joinGroup(0);
         }  //else if (id == R.id.nav_share) {
         //} else if (id == R.id.nav_send) {
         //}
@@ -251,7 +265,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG,"onConnectionFailed:" + connectionResult);
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     @Override
@@ -309,6 +323,7 @@ public class MainActivity extends AppCompatActivity
                     } else {
                         System.out.printf("snapshot is null\n");
                         User user = new User();
+                        user.setUserId(userId);
                         user.setName(userName);
                         user.setEmail(userEmail);
 

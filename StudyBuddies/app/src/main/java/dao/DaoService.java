@@ -9,14 +9,16 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by mattmessa on 5/15/16.
  */
 
 public class DaoService {
-
 
     private int nextGroupNumber;
     private int nextCourseNumber;
@@ -45,6 +47,34 @@ public class DaoService {
                         System.out.println(myCourse);
 
                         MainActivity.courseList.add(myCourse);
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+    }
+
+    public void addUserListListener() {
+
+        Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/User");
+        final Query queryRef = ref.orderByKey();
+
+        queryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    MainActivity.userList.clear();
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+
+                        User myUser = userSnapshot.getValue(User.class);
+
+                        MainActivity.userList.add(myUser);
 
                     }
 
@@ -357,15 +387,44 @@ public class DaoService {
         ref.child("Course").child(courseKey.toString()).setValue(course);
     }
 
-    //don't think we need these
+    public Course getCourse(final int courseId) {
 
-/*
-    public Course getCourse(Integer courseId) {
+        Iterator<Course> courseIterator = MainActivity.courseList.iterator();
+        while (courseIterator.hasNext()) {
+            if(courseId == courseIterator.next().getCourseId())
+            {
+                return courseIterator.next();
+            }
 
-        new Firebase("https://vivid-heat-5794.firebaseio.com/Course/").
-        Course course = new Course();
+        }
 
-
+        return null;
     }
-    */
+
+    public Group getGroup(final int groupId) {
+
+        Iterator<Group> groupIterator = MainActivity.groupList.iterator();
+        while (groupIterator.hasNext()) {
+            if(groupId == groupIterator.next().getGroupId())
+            {
+                return groupIterator.next();
+            }
+        }
+
+        return null;
+    }
+
+    public User getUser(final String userId) {
+
+        Iterator<User> userIterator = MainActivity.userList.iterator();
+        while (userIterator.hasNext()) {
+            if(userId == userIterator.next().getUserId())
+            {
+                return userIterator.next();
+            }
+        }
+
+        return null;
+    }
+
 }

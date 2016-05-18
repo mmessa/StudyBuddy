@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class User {
 
+    private String userId;
     private String name;
     private String email;
     private List groupIds;
@@ -27,6 +28,14 @@ public class User {
         this.email = email;
         this.groupIds = null;
         this.courseIds = null;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
