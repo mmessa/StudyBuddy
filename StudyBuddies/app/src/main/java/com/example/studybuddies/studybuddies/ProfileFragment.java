@@ -9,19 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
+
+import com.squareup.picasso.Picasso;
+
+import dao.DaoService;
+import dao.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,8 +37,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private String mParam1;
     private String mParam2;
 
-    private String email;
-    private String name;
+    private DaoService daoService = new DaoService();
+    private User myUser;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,8 +72,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        email = MainActivity.userEmail;
-        Log.d("ProfileFragment", "Profile acct info:" + email);
     }
 
     @Override
@@ -86,8 +80,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_profile, container, false);
 
-        //Button b = (Button) v.findViewById(R.id.sign_in_button);
-        //b.setOnClickListener(this);
+        myUser = daoService.getUser(MainActivity.userId);
+
+        System.out.println("testing testing testing");
+        System.out.println(myUser.getName());
+        System.out.println(myUser.getEmail());
+
+        TextView userName = (TextView) v.findViewById(R.id.userName);
+        userName.setText(MainActivity.userName);
+
+        TextView userEmail = (TextView) v.findViewById(R.id.userEmail);
+        userEmail.setText(MainActivity.userEmail);
+
+        ImageView imgView = (ImageView) v.findViewById(R.id.userImage);
+
+        System.out.println(MainActivity.userImage);
+        Picasso.with(getContext()).load(MainActivity.userImage).resize(600, 600).into(imgView);
+
         return v;
     }
 

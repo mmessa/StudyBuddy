@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity
     public static String userEmail;
     public static String userName;
     public static String userId;
+    public static Uri userImage;
+
     public static List courseList = new ArrayList();
     public static List groupList = new ArrayList();
     public static List userList = new ArrayList();
@@ -208,39 +210,13 @@ public class MainActivity extends AppCompatActivity
         Class fragmentClass = null;
         if (id == R.id.nav_profile) {
             fragmentClass = ProfileFragment.class;
-            System.out.println("calling create group");
-
-            daoService.createCourse("Parallel", 551);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            daoService.createGroup("James' Group", 0);
-
-            System.out.printf("%d", MainActivity.courseList.size());
-            System.out.println(MainActivity.courseList);
-
 
         } else if (id == R.id.nav_courses) {
             fragmentClass = CourseFragment.class;
-            //daoService.joinCourse(0);
-
-
-            //daoService.getCourse(0);
-            //daoService.queryCourse(0);
-
-            //Course newCourse = daoService.getQueriedCourse();
-
-            Course newCourse = daoService.getCourse(0);
-            System.out.println("printing retrieved course");
-            System.out.println("1 = " + newCourse);
-            System.out.println("1 = " + newCourse.getName());
-
 
         } else if (id == R.id.nav_groups) {
             fragmentClass = GroupFragment.class;
-            //daoService.joinGroup(0);
+
         }  //else if (id == R.id.nav_share) {
         //} else if (id == R.id.nav_send) {
         //}
@@ -311,6 +287,7 @@ public class MainActivity extends AppCompatActivity
             userEmail = acct.getEmail();
             userName = acct.getDisplayName();
             userId = acct.getId();
+            userImage = acct.getPhotoUrl();
 
             Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/User");
             final Query queryRef = ref.orderByChild("email").equalTo(userEmail);
