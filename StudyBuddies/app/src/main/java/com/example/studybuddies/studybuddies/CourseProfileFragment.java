@@ -10,8 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 import dao.Course;
+import dao.Group;
 
 
 /**
@@ -86,6 +90,11 @@ public class CourseProfileFragment extends Fragment {
 
         Button add_group_button = (Button) rootView.findViewById(R.id.add_group_button);
         final EditText group_name = (EditText) rootView.findViewById(R.id.group_edit_text);
+
+        final ArrayList<Group> array_of_groups = (ArrayList<Group>) MainActivity.groupList;
+        final GroupAdapter group_adapter = new GroupAdapter(getActivity(), array_of_groups);
+        final ListView group_list = (ListView) rootView.findViewById(R.id.group_list_view);
+        group_list.setAdapter(group_adapter);
 
         add_group_button.setOnClickListener(new View.OnClickListener() {
             @Override
