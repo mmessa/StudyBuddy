@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import dao.Course;
 import dao.Group;
@@ -91,7 +92,19 @@ public class CourseProfileFragment extends Fragment {
         Button add_group_button = (Button) rootView.findViewById(R.id.add_group_button);
         final EditText group_name = (EditText) rootView.findViewById(R.id.group_edit_text);
 
-        final ArrayList<Group> array_of_groups = (ArrayList<Group>) MainActivity.groupList;
+        final ArrayList<Group> array_of_groups = new ArrayList<Group>();
+        Iterator<Group> group_iterator = MainActivity.groupList.iterator();
+
+        // Loop through array_of_groups and find only groups that belong to this course
+        while(group_iterator.hasNext()){
+            Group group = group_iterator.next();
+
+            if(group.getCourseId() == course_id_passed_in){
+                array_of_groups.add(group);
+            }
+        }
+
+
         final GroupAdapter group_adapter = new GroupAdapter(getActivity(), array_of_groups);
         final ListView group_list = (ListView) rootView.findViewById(R.id.group_list_view);
         group_list.setAdapter(group_adapter);
