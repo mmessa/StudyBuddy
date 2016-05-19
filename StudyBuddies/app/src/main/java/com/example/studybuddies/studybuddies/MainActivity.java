@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.transition.AutoTransition;
+import android.transition.Scene;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,10 +23,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Logger;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.api.Auth;
@@ -39,7 +46,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
+import dao.Course;
 import dao.DaoService;
 import dao.User;
 
@@ -51,6 +60,8 @@ public class MainActivity extends AppCompatActivity
                     GoogleApiClient.OnConnectionFailedListener,
                     View.OnClickListener,
                     GoogleApiClient.ConnectionCallbacks {
+                    CourseProfileFragment.OnFragmentInteractionListener,
+                    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
@@ -217,7 +228,7 @@ public class MainActivity extends AppCompatActivity
             fragmentClass = ProfileFragment.class;
 
         } else if (id == R.id.nav_courses) {
-            fragmentClass = GroupProfileFragment.class;
+            fragmentClass = CourseFragment.class;
 
         } else if (id == R.id.nav_groups) {
             fragmentClass = GroupFragment.class;
