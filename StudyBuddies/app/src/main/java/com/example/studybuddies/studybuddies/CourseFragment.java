@@ -9,7 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import dao.Course;
 import dao.DaoService;
 
 
@@ -75,6 +79,11 @@ public class CourseFragment extends Fragment {
         final EditText course_name = (EditText) rootView.findViewById(R.id.course_name_edit_text);
         final EditText course_number = (EditText) rootView.findViewById(R.id.course_number_edit_text);
 
+        final ArrayList<Course> array_of_courses = (ArrayList<Course>) MainActivity.courseList;
+        final CourseAdapter adapter = new CourseAdapter(getActivity(), array_of_courses);
+        final ListView course_list = (ListView) rootView.findViewById(R.id.course_list_view);
+        course_list.setAdapter(adapter);
+
         add_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +91,8 @@ public class CourseFragment extends Fragment {
                     String course_name_value = course_name.getText().toString();
                     String course_number_value_string = course_number.getText().toString();
                     int course_number_value = Integer.parseInt(course_number_value_string);
+
+                    String course_added_notification = "Course Added";
 
                     daoService.createCourse(course_name_value,course_number_value);
                 }
