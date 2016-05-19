@@ -16,6 +16,11 @@ import com.google.android.gms.auth.api.Auth;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import dao.DaoService;
 import dao.User;
 
@@ -82,10 +87,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         myUser = daoService.getUser(MainActivity.userId);
 
-        System.out.println("testing testing testing");
-        System.out.println(myUser.getName());
-        System.out.println(myUser.getEmail());
-
         TextView userName = (TextView) v.findViewById(R.id.userName);
         userName.setText(MainActivity.userName);
 
@@ -94,8 +95,31 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         ImageView imgView = (ImageView) v.findViewById(R.id.userImage);
 
-        System.out.println(MainActivity.userImage);
         Picasso.with(getContext()).load(MainActivity.userImage).resize(600, 600).into(imgView);
+
+        TextView coursesEnrolled = (TextView) v.findViewById(R.id.coursesEnrolled);
+        TextView groupsJoined = (TextView) v.findViewById(R.id.groupsJoined);
+        if(myUser.getCourseIds() == null)
+        {
+            coursesEnrolled.setText("You are enrolled in 0 StudyBuddy courses.");
+        }
+        else
+        {
+            coursesEnrolled.setText("You are enrolled in " + myUser.getCourseIds().size() + " StudyBuddy courses!");
+        }
+
+        if(myUser.getGroupIds() == null)
+        {
+            groupsJoined.setText("You have joined 0 StudyBuddy groups.");
+        }
+        else
+        {
+            groupsJoined.setText("You have joined " + myUser.getGroupIds().size() + " StudyBuddy groups!");
+        }
+
+
+
+
 
         return v;
     }
