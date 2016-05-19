@@ -59,7 +59,9 @@ public class MainActivity extends AppCompatActivity
                     CourseFragment.OnFragmentInteractionListener,
                     GroupFragment.OnFragmentInteractionListener,
                     ProfileFragment.OnFragmentInteractionListener,
-                    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+                    GoogleApiClient.OnConnectionFailedListener,
+                    View.OnClickListener,
+                    GoogleApiClient.ConnectionCallbacks {
 
     private static final String TAG = "MainActivity";
 
@@ -235,12 +237,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_courses) {
             fragmentClass = CourseFragment.class;
-            daoService.joinCourse(0);
+            //daoService.joinCourse(0);
 
 
         } else if (id == R.id.nav_groups) {
             fragmentClass = GroupFragment.class;
-            daoService.joinGroup(0);
+            //daoService.joinGroup(0);
         }  //else if (id == R.id.nav_share) {
         //} else if (id == R.id.nav_send) {
         //}

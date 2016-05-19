@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -85,6 +86,8 @@ public class CourseFragment extends Fragment
 
         if(MainActivity.userLatLng != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(MainActivity.userLatLng));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(CHICO));
         }
     }
 
