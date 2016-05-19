@@ -407,7 +407,7 @@ public class DaoService {
         Iterator<Group> groupIterator = MainActivity.groupList.iterator();
         while (groupIterator.hasNext()) {
             Group group = groupIterator.next();
-            if(groupId == groupIterator.next().getGroupId())
+            if(groupId == group.getGroupId())
             {
                 return group;
             }
@@ -419,8 +419,11 @@ public class DaoService {
     public User getUser(final String userId) {
 
         Iterator<User> userIterator = MainActivity.userList.iterator();
+        System.out.println("in get user");
+        System.out.println(MainActivity.userList.size());
         while (userIterator.hasNext()) {
             User user = userIterator.next();
+
             if(user.getUserId().equals(userId))
             {
                 return user;
