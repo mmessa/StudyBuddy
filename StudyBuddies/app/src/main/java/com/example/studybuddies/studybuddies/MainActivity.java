@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
                     CourseFragment.OnFragmentInteractionListener,
                     GroupFragment.OnFragmentInteractionListener,
                     ProfileFragment.OnFragmentInteractionListener,
+                    CourseProfileFragment.OnFragmentInteractionListener,
                     GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";

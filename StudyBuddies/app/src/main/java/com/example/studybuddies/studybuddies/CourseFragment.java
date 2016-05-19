@@ -4,9 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -98,6 +102,39 @@ public class CourseFragment extends Fragment {
                 }
             }
         });
+
+        course_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+               // FragmentManager frag_transaction = getActivity().getSupportFragmentManager();
+                //frag_transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                //Fragment course_profile = new CourseProfileFragment();
+               // frag_transaction.replace(R.id.course_fragment, course_profile);
+               // frag_transaction.addToBackStack(null);
+                //frag_transaction.commit();
+                Class fragmentClass = CourseProfileFragment.class;
+                Fragment fragment = null;
+                try {
+                     fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+               // FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+               // CourseProfileFragment course_profile_fragment = new CourseProfileFragment();
+                FragmentManager fragment_manager = getActivity().getSupportFragmentManager();
+                fragment_manager.beginTransaction().replace(R.id.course_fragment, fragment).commit();
+                //ft.replace(R.id.course_fragment, fragment);
+                //ft.addToBackStack(null);
+               // ft.commit();
+                Log.d("Button", "Clicked");
+            }
+        });
+
+
         return rootView;
     }
 
@@ -124,6 +161,8 @@ public class CourseFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
