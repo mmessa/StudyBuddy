@@ -31,7 +31,7 @@ public class CourseFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    public static DaoService daoService = new DaoService();
+    //public static DaoService daoService = new DaoService();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,7 +94,7 @@ public class CourseFragment extends Fragment {
 
                     String course_added_notification = "Course Added";
 
-                    daoService.createCourse(course_name_value,course_number_value);
+                    MainActivity.daoService.createCourse(course_name_value,course_number_value);
                 }
             }
         });
