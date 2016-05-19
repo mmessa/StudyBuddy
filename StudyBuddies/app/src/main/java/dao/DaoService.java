@@ -391,9 +391,10 @@ public class DaoService {
 
         Iterator<Course> courseIterator = MainActivity.courseList.iterator();
         while (courseIterator.hasNext()) {
-            if(courseId == courseIterator.next().getCourseId())
+            Course course = courseIterator.next();
+            if(courseId == course.getCourseId())
             {
-                return courseIterator.next();
+                return course;
             }
 
         }
@@ -405,9 +406,10 @@ public class DaoService {
 
         Iterator<Group> groupIterator = MainActivity.groupList.iterator();
         while (groupIterator.hasNext()) {
+            Group group = groupIterator.next();
             if(groupId == groupIterator.next().getGroupId())
             {
-                return groupIterator.next();
+                return group;
             }
         }
 
@@ -418,9 +420,10 @@ public class DaoService {
 
         Iterator<User> userIterator = MainActivity.userList.iterator();
         while (userIterator.hasNext()) {
-            if(userId == userIterator.next().getUserId())
+            User user = userIterator.next();
+            if(user.getUserId().equals(userId))
             {
-                return userIterator.next();
+                return user;
             }
         }
 

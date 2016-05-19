@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import dao.Course;
 
@@ -66,16 +68,36 @@ public class CourseProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        final View rootView = inflater.inflate(R.layout.fragment_course_profile_layout, container, false);
+
+        // Receive Course id passed in from course fragment
         Bundle bundle = getArguments();
-        int course_id_passed_in = bundle.getInt("course_id_to_pass");
+        final int course_id_passed_in = bundle.getInt("course_id_to_pass");
         System.out.println(course_id_passed_in);
         Course current_course = MainActivity.daoService.getCourse(course_id_passed_in);
 
-
+        // Set the app title to the course name
         String course_name = current_course.getName();
-        ( (FragmentActivity) getActivity()).setTitle(course_name);
+        int course_number = current_course.getNumber();
+        String course_number_string = String.valueOf(course_number);
+        String course_title = course_name + " " + course_number_string;
+        ( (FragmentActivity) getActivity()).setTitle(course_title);
 
-        final View rootView = inflater.inflate(R.layout.fragment_course_profile_layout, container, false);
+        Button add_group_button = (Button) rootView.findViewById(R.id.add_group_button);
+        final EditText group_name = (EditText) rootView.findViewById(R.id.group_edit_text);
+
+        add_group_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!group_name.getText().toString().equals("")){
+                    String group_name_value = group_name.getText().toString();
+                    MainActivity.daoService.createGroup(group_name_value, course_id_passed_in);
+                }
+            }
+        });
+
+
         return rootView;
     }
 
