@@ -4,17 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTabHost;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -23,12 +18,12 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CourseFragment.OnFragmentInteractionListener} interface
+ * {@link GroupProfileFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CourseFragment#newInstance} factory method to
+ * Use the {@link GroupProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseFragment extends Fragment
+public class GroupProfileFragment extends Fragment
         implements
         OnMapReadyCallback{
     // TODO: Rename parameter arguments, choose names that match
@@ -47,7 +42,7 @@ public class CourseFragment extends Fragment
     private OnFragmentInteractionListener mListener;
 
 
-    public CourseFragment() {
+    public GroupProfileFragment() {
         // Required empty public constructor
     }
 
@@ -57,11 +52,11 @@ public class CourseFragment extends Fragment
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CourseFragment.
+     * @return A new instance of fragment GroupProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CourseFragment newInstance(String param1, String param2) {
-        CourseFragment fragment = new CourseFragment();
+    public static GroupProfileFragment newInstance(String param1, String param2) {
+        GroupProfileFragment fragment = new GroupProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -96,7 +91,7 @@ public class CourseFragment extends Fragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_course, container, false);
+        View view = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
         SupportMapFragment mapFragment = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map));
