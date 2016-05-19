@@ -105,7 +105,7 @@ public class CourseProfileFragment extends Fragment {
         }
 
 
-        final GroupAdapter group_adapter = new GroupAdapter(getActivity(), array_of_groups);
+        final CourseGroupsAdapter group_adapter = new CourseGroupsAdapter(getActivity(), array_of_groups);
         final ListView group_list = (ListView) rootView.findViewById(R.id.group_list_view);
         group_list.setAdapter(group_adapter);
 

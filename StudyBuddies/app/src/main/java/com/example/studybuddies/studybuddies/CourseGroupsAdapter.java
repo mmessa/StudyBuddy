@@ -14,9 +14,9 @@ import dao.Group;
 /**
  * Created by icebramz on 5/18/16.
  */
-public class GroupAdapter extends ArrayAdapter<Group> {
+public class CourseGroupsAdapter extends ArrayAdapter<Group> {
 
-    public GroupAdapter(Context context, ArrayList<Group> groups) { super(context, 0, groups);
+    public CourseGroupsAdapter(Context context, ArrayList<Group> groups) { super(context, 0, groups);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class GroupAdapter extends ArrayAdapter<Group> {
         Group group = getItem(position);
 
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.group_list_layout, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.course_groups_list_layout, parent, false);
         }
 
         TextView group_name = (TextView) convertView.findViewById(R.id.group_title);
