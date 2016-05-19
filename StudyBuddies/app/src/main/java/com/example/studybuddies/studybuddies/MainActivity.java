@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import dao.Course;
 import dao.DaoService;
 import dao.User;
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     public static String userId;
     public static List courseList = new ArrayList();
     public static List groupList = new ArrayList();
+    public static List userList = new ArrayList();
 
     public static LatLng userLatLng;
 
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
         // Firebase connection
+
         Firebase.setAndroidContext(this);
         //Firebase.getDefaultConfig().setLogLevel(Logger.Level.DEBUG);
         Firebase myFirebaseRef = new Firebase("https://vivid-heat-5794.firebaseio.com/");
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity
         daoService.addNextGroupNumberListener();
         daoService.addCourseListListener();
         daoService.addGroupListListener();
+        daoService.addUserListListener();
 
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
@@ -267,7 +271,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG,"onConnectionFailed:" + connectionResult);
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     @Override
@@ -325,6 +329,7 @@ public class MainActivity extends AppCompatActivity
                     } else {
                         System.out.printf("snapshot is null\n");
                         User user = new User();
+                        user.setUserId(userId);
                         user.setName(userName);
                         user.setEmail(userEmail);
 
