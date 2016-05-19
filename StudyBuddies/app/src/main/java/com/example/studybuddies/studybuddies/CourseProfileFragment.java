@@ -4,9 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import dao.Course;
 
 
 /**
@@ -63,8 +66,17 @@ public class CourseProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_course_profile_layout, container, false);
+        Bundle bundle = getArguments();
+        int course_id_passed_in = bundle.getInt("course_id_to_pass");
+        System.out.println(course_id_passed_in);
+        Course current_course = MainActivity.daoService.getCourse(course_id_passed_in);
+
+
+        String course_name = current_course.getName();
+        ( (FragmentActivity) getActivity()).setTitle(course_name);
+
+        final View rootView = inflater.inflate(R.layout.fragment_course_profile_layout, container, false);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

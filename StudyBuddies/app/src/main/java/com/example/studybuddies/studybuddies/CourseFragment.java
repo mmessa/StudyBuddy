@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import dao.Course;
@@ -107,29 +108,20 @@ public class CourseFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-               // FragmentManager frag_transaction = getActivity().getSupportFragmentManager();
-                //frag_transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                //Fragment course_profile = new CourseProfileFragment();
-               // frag_transaction.replace(R.id.course_fragment, course_profile);
-               // frag_transaction.addToBackStack(null);
-                //frag_transaction.commit();
-                Class fragmentClass = CourseProfileFragment.class;
-                Fragment fragment = null;
-                try {
-                     fragment = (Fragment) fragmentClass.newInstance();
-                } catch (java.lang.InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-               // FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-               // CourseProfileFragment course_profile_fragment = new CourseProfileFragment();
-                FragmentManager fragment_manager = getActivity().getSupportFragmentManager();
-                fragment_manager.beginTransaction().replace(R.id.course_fragment, fragment).commit();
-                //ft.replace(R.id.course_fragment, fragment);
-                //ft.addToBackStack(null);
-               // ft.commit();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                CourseProfileFragment course_profile_fragment = new CourseProfileFragment();
+
+                Bundle bundles = new Bundle();
+                Course course_to_pass = adapter.getItem(position);
+                int course_id_to_pass = course_to_pass.getCourseId();
+
+                bundles.putInt("course_id_to_pass", course_id_to_pass);
+
+                course_profile_fragment.setArguments(bundles);
+                ft.replace( ((ViewGroup) (getView().getParent())).getId(), course_profile_fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+
                 Log.d("Button", "Clicked");
             }
         });
