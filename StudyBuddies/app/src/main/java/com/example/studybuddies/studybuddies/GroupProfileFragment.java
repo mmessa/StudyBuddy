@@ -14,7 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -28,8 +30,16 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.Manifest;
+
+import dao.Group;
 
 
 /**
@@ -66,6 +76,12 @@ public class GroupProfileFragment extends Fragment
     private GoogleApiClient mGoogleApiClient;
 
     private Location mLastLocation;
+
+    private Group mCurrentGroup;
+
+    private HashMap<String,double[]> mCurrentLocations;
+
+    private List<double[]> mCurrentLocationsList;
 
     private Marker mCurrLocationMarker;
 
@@ -135,15 +151,49 @@ public class GroupProfileFragment extends Fragment
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+        if(mCurrentLocations != null) {
+
+            Iterator it = mCurrentLocations.entrySet().iterator();
+            while (it.hasNext()) {
+                HashMap.Entry pair = (HashMap.Entry)it.next();
+                //Log.d(TAG, "onMapReady: "+(HashMap.Entry)it.);
+                double[] test = (double[])pair.getValue();
+                LatLng latlng = new LatLng(test[0],test[1]);
+                mMap.addMarker(new MarkerOptions()
+                .position(latlng)
+                .title((String) pair.getKey()));
+            }
+        }
+
         Log.d(TAG, "onMapReady: Past Permissions");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group_profile, container, false);
+
+        //Getting the infromation from the previous fragment
+        Bundle bundle = getArguments();
+
+        //Getting the group from the id
+        final int group_id_passed_in = bundle.getInt("group_id_to_pass");
+        mCurrentGroup = MainActivity.daoService.getGroup(group_id_passed_in);
+
+        //Getting Current Locations in the group
+        mCurrentLocations = mCurrentGroup.getUserLatLngs();
+        if(mCurrentLocations == null) {
+            mCurrentLocations = new HashMap<String, double[]>();
+        }
+
+        //Setting the Title
+        (getActivity()).setTitle(mCurrentGroup.getName());
+
+
+        //Checking the current sdk version for permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -155,11 +205,38 @@ public class GroupProfileFragment extends Fragment
             }
         }
 
+        //Getting the map from the view
         SupportMapFragment mapFragment = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
 
+        //Getting the broadcast button and setting its onclick listener
+        Button location_broadcaster = (Button) view.findViewById(R.id.location_broadcaster);
+        location_broadcaster.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Firebase ref = new Firebase("https://vivid-heat-5794.firebaseio.com/")
+                        .child("Group")
+                        .child(Integer.toString(mCurrentGroup.getGroupId()));
+                double[] latlng = {mLastLocation.getLatitude(), mLastLocation.getLongitude()};
 
+                Log.d(TAG, "onClick: "+Double.toString(latlng[0]));
+                Log.d(TAG, "onClick: "+Double.toString(latlng[1]));
+                double[] myLocationInGroup = new double[0];
+                if(mCurrentLocations != null) {
+                    myLocationInGroup = mCurrentLocations.get(MainActivity.userId);
+                }
+                if(myLocationInGroup == null) {
+                    mCurrentLocations.put(MainActivity.userId, latlng);
+                    mCurrentGroup.setUserLatLngs(mCurrentLocations);
+                    ref.setValue(mCurrentGroup);
+                } else {
+                    mCurrentLocations.remove(MainActivity.userId);
+                    mCurrentGroup.setUserLatLngs(mCurrentLocations);
+                    ref.setValue(mCurrentGroup);
+                }
+            }
+        });
         return view;
     }
 
