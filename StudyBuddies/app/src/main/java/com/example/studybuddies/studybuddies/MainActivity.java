@@ -1,11 +1,13 @@
 package com.example.studybuddies.studybuddies;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.transition.AutoTransition;
@@ -40,6 +42,8 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +55,14 @@ import dao.User;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    CourseFragment.OnFragmentInteractionListener,
+                    GroupProfileFragment.OnFragmentInteractionListener,
                     GroupFragment.OnFragmentInteractionListener,
                     ProfileFragment.OnFragmentInteractionListener,
+                    GoogleApiClient.OnConnectionFailedListener,
+                    View.OnClickListener,
+                    GoogleApiClient.ConnectionCallbacks,
                     CourseProfileFragment.OnFragmentInteractionListener,
-                    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+                    CourseFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
 
@@ -66,6 +73,9 @@ public class MainActivity extends AppCompatActivity
 
     private static final int RC_SIGN_IN = 9001;
 
+    public static final int REQUEST_LOCATION = 0;
+
+
     public static String userEmail;
     public static String userName;
     public static String userId;
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     public static List groupList = new ArrayList();
     public static List userList = new ArrayList();
 
+    public static LatLng userLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +110,9 @@ public class MainActivity extends AppCompatActivity
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
+                .addConnectionCallbacks(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                .addApi(LocationServices.API)
                 .build();
 
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -125,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        //sets up listeners to maintain global lists(courses, groups, users) and
+        //sets up listeners to maintain global lists(courses, groups) and
         // the course & group next ids
         daoService.addNextCourseNumberListener();
         daoService.addNextGroupNumberListener();
@@ -151,6 +164,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+        mGoogleApiClient.connect();
     }
 
     private void hideProgressDialog() {
@@ -162,7 +176,7 @@ public class MainActivity extends AppCompatActivity
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("A message!");
+            mProgressDialog.setMessage("Attempting to sign in using Google");
             mProgressDialog.setIndeterminate(true);
         }
 
@@ -337,5 +351,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    @Override
+    public void onConnected(Bundle bundle) {
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
 
 }

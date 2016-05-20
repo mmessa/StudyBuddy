@@ -108,7 +108,7 @@
 
         <ListView
             android:id="@+id/course_list_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/add_course_button">
         </ListView>

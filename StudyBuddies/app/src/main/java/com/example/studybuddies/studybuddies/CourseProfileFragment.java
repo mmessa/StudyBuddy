@@ -5,9 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -105,8 +108,8 @@ public class CourseProfileFragment extends Fragment {
         }
 
 
-        final GroupAdapter group_adapter = new GroupAdapter(getActivity(), array_of_groups);
-        final ListView group_list = (ListView) rootView.findViewById(R.id.group_list_view);
+        final CourseGroupsAdapter group_adapter = new CourseGroupsAdapter(getActivity(), array_of_groups);
+        final ListView group_list = (ListView) rootView.findViewById(R.id.course_group_list_view);
         group_list.setAdapter(group_adapter);
 
         add_group_button.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +119,26 @@ public class CourseProfileFragment extends Fragment {
                     String group_name_value = group_name.getText().toString();
                     MainActivity.daoService.createGroup(group_name_value, course_id_passed_in);
                 }
+            }
+        });
+
+        group_list.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                Log.d("CourseProfileFragment", "Group clicked");
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                GroupProfileFragment group_profile_fragment = new GroupProfileFragment();
+
+                Bundle bundles = new Bundle();
+                Group group_to_pass = group_adapter.getItem(position);
+                int group_id_to_pass = group_to_pass.getGroupId();
+
+                bundles.putInt("group_id_to_pass",group_id_to_pass);
+
+                group_profile_fragment.setArguments(bundles);
+                ft.replace( ((ViewGroup) (getView().getParent())).getId(), group_profile_fragment);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 

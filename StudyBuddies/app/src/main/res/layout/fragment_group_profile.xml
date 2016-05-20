@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".GroupProfileFragment">
+
+    <Button
+        android:id="@+id/location_broadcaster"
+        android:gravity="center"
+        android:text="Broadcast Location"
+        android:layout_above="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <include layout="@layout/fragment_map"/>
+
+
+</LinearLayout>

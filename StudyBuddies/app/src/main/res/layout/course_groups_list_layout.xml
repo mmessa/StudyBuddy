@@ -4,15 +4,10 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/group_list_course_title"
+        android:id="@+id/group_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Course Number + Course Title"/>
-
-    <TextView
-        android:id="@+id/group_list_group_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Group Title"/>
+        android:text="Group Title: "
+        android:padding="15dp"/>
 
 </LinearLayout>
