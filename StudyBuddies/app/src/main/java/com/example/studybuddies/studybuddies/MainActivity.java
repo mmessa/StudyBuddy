@@ -1,5 +1,6 @@
 package com.example.studybuddies.studybuddies;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,22 +60,20 @@ public class MainActivity extends AppCompatActivity
                     ProfileFragment.OnFragmentInteractionListener,
                     GoogleApiClient.OnConnectionFailedListener,
                     View.OnClickListener,
-                    GoogleApiClient.ConnectionCallbacks {
+                    GoogleApiClient.ConnectionCallbacks,
                     CourseProfileFragment.OnFragmentInteractionListener,
-                    GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+                    CourseFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
 
     public static DaoService daoService = new DaoService();
     public static GoogleApiClient mGoogleApiClient;
 
-    public Location mLastLocation;
-
     private ProgressDialog mProgressDialog;
 
     private static final int RC_SIGN_IN = 9001;
 
-    private static final int REQUEST_LOCATION = 0;
+    public static final int REQUEST_LOCATION = 0;
 
 
     public static String userEmail;
@@ -355,47 +354,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(mLastLocation != null) {
-            Log.d(TAG, "Latitude: " + mLastLocation.getLatitude());
-            Log.d(TAG, "Longitude: " + mLastLocation.getLongitude());
-        } else {
-            Log.d(TAG, "No location detected");
-        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
-    }
-
-    public void getLocation(View view) {
-
-        Log.d(TAG,"Get location button clicked. Checking Permision.");
-
-        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED ){
-            requestLocationPermission();
-        } else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if(mLastLocation != null) {
-                Log.d(TAG, "Latitude: " + mLastLocation.getLatitude());
-                Log.d(TAG, "Longitude: " + mLastLocation.getLongitude());
-                userLatLng = new LatLng(mLastLocation.getLatitude(),
-                                        mLastLocation.getLongitude());
-            } else {
-                Log.d(TAG, "No location detected");
-            }
-        }
-
-    }
-
-    private void requestLocationPermission() {
-        Log.d(TAG, "Requesting Location Permision");
-
-        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_LOCATION);
-
     }
 
 }

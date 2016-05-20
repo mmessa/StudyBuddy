@@ -1,18 +1,35 @@
 package com.example.studybuddies.studybuddies;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.jar.Manifest;
 
 
 /**
@@ -25,22 +42,38 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class GroupProfileFragment extends Fragment
         implements
-        OnMapReadyCallback{
+        OnMapReadyCallback,
+        OnMyLocationButtonClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final String TAG = "GroupProfileFragment";
+
     // TODO: Rename and change types of parameters
     private String mParam1;
+
     private String mParam2;
 
     private GoogleMap mMap;
+
+    private LocationRequest mLocationRequest;
+
+    private GoogleApiClient mGoogleApiClient;
+
+    private Location mLastLocation;
+
+    private Marker mCurrLocationMarker;
 
     private static final LatLng CHICO = new LatLng(39.7285, -121.8375);
 
     private OnFragmentInteractionListener mListener;
 
+    private static final int REQUEST_LOCATION = 0;
 
     public GroupProfileFragment() {
         // Required empty public constructor
@@ -79,11 +112,30 @@ public class GroupProfileFragment extends Fragment
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
-        if(MainActivity.userLatLng != null) {
+        if (MainActivity.userLatLng != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(MainActivity.userLatLng));
         } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(CHICO));
         }
+        mMap.setOnMyLocationButtonClickListener(this);
+        Log.d(TAG, "onMapReady: " + Integer.toString(Build.VERSION.SDK_INT));
+        Log.d(TAG, "onMapReady: " + Integer.toString(Build.VERSION_CODES.M));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onMapReady: Location Permission Granted");
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            } else {
+                Log.d(TAG, "onMapReady: Location Permission Not Granted");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MainActivity.REQUEST_LOCATION);
+            }
+        } else {
+            buildGoogleApiClient();
+            mMap.setMyLocationEnabled(true);
+        }
+        Log.d(TAG, "onMapReady: Past Permissions");
     }
 
     @Override
@@ -92,6 +144,16 @@ public class GroupProfileFragment extends Fragment
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_group_profile, container, false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onCreateView: permission granted");
+            } else {
+                Log.d(TAG, "onCreateView: permission denied");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MainActivity.REQUEST_LOCATION);
+            }
+        }
 
         SupportMapFragment mapFragment = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map));
@@ -125,6 +187,38 @@ public class GroupProfileFragment extends Fragment
         mListener = null;
     }
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -149,5 +243,35 @@ public class GroupProfileFragment extends Fragment
             return;
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == MainActivity.REQUEST_LOCATION) {
+            if (permissions.length == 1 &&
+                    permissions[0] == android.Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getActivity(),
+                        android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    if(mGoogleApiClient == null){
+                        buildGoogleApiClient();
+                    }
+                    mMap.setMyLocationEnabled(true);
+                }
+            }
+        } else {
+            Log.d(TAG, "onRequestPermissionsResult: false");
+            mMap.setMyLocationEnabled(false);
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 }

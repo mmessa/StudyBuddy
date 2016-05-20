@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,26 +15,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import dao.Course;
-import dao.Group;
+import dao.DaoService;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CourseProfileFragment.OnFragmentInteractionListener} interface
+ * {@link CourseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CourseProfileFragment#newInstance} factory method to
+ * Use the {@link CourseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseProfileFragment extends Fragment {
+public class CourseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    //public static DaoService daoService = new DaoService();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -42,7 +44,7 @@ public class CourseProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public CourseProfileFragment() {
+    public CourseFragment() {
         // Required empty public constructor
     }
 
@@ -52,11 +54,11 @@ public class CourseProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CourseProfileFragment.
+     * @return A new instance of fragment CourseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CourseProfileFragment newInstance(String param1, String param2) {
-        CourseProfileFragment fragment = new CourseProfileFragment();
+    public static CourseFragment newInstance(String param1, String param2) {
+        CourseFragment fragment = new CourseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -76,69 +78,51 @@ public class CourseProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final View rootView = inflater.inflate(R.layout.fragment_course, container, false);
 
-        final View rootView = inflater.inflate(R.layout.fragment_course_profile_layout, container, false);
+        Button add_course_button = (Button) rootView.findViewById(R.id.add_course_button);
+        final EditText course_name = (EditText) rootView.findViewById(R.id.course_name_edit_text);
+        final EditText course_number = (EditText) rootView.findViewById(R.id.course_number_edit_text);
 
-        // Receive Course id passed in from course fragment
-        Bundle bundle = getArguments();
-        final int course_id_passed_in = bundle.getInt("course_id_to_pass");
-        System.out.println(course_id_passed_in);
-        Course current_course = MainActivity.daoService.getCourse(course_id_passed_in);
+        final ArrayList<Course> array_of_courses = (ArrayList<Course>) MainActivity.courseList;
+        final CourseAdapter adapter = new CourseAdapter(getActivity(), array_of_courses);
+        final ListView course_list = (ListView) rootView.findViewById(R.id.course_list_view);
+        course_list.setAdapter(adapter);
 
-        // Set the app title to the course name
-        String course_name = current_course.getName();
-        int course_number = current_course.getNumber();
-        String course_number_string = String.valueOf(course_number);
-        String course_title = course_name + " " + course_number_string;
-        ( (FragmentActivity) getActivity()).setTitle(course_title);
-
-        Button add_group_button = (Button) rootView.findViewById(R.id.add_group_button);
-        final EditText group_name = (EditText) rootView.findViewById(R.id.group_edit_text);
-
-        final ArrayList<Group> array_of_groups = new ArrayList<Group>();
-        Iterator<Group> group_iterator = MainActivity.groupList.iterator();
-
-        // Loop through array_of_groups and find only groups that belong to this course
-        while(group_iterator.hasNext()){
-            Group group = group_iterator.next();
-
-            if(group.getCourseId() == course_id_passed_in){
-                array_of_groups.add(group);
-            }
-        }
-
-
-        final CourseGroupsAdapter group_adapter = new CourseGroupsAdapter(getActivity(), array_of_groups);
-        final ListView group_list = (ListView) rootView.findViewById(R.id.course_group_list_view);
-        group_list.setAdapter(group_adapter);
-
-        add_group_button.setOnClickListener(new View.OnClickListener() {
+        add_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!group_name.getText().toString().equals("")){
-                    String group_name_value = group_name.getText().toString();
-                    MainActivity.daoService.createGroup(group_name_value, course_id_passed_in);
+                if( (!course_name.getText().toString().equals("")) && (!course_number.getText().toString().equals("")) ){
+                    String course_name_value = course_name.getText().toString();
+                    String course_number_value_string = course_number.getText().toString();
+                    int course_number_value = Integer.parseInt(course_number_value_string);
+
+                    String course_added_notification = "Course Added";
+
+                    MainActivity.daoService.createCourse(course_name_value,course_number_value);
                 }
             }
         });
 
-        group_list.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+        course_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                Log.d("CourseProfileFragment", "Group clicked");
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                GroupProfileFragment group_profile_fragment = new GroupProfileFragment();
+                CourseProfileFragment course_profile_fragment = new CourseProfileFragment();
 
                 Bundle bundles = new Bundle();
-                Group group_to_pass = group_adapter.getItem(position);
-                int group_id_to_pass = group_to_pass.getGroupId();
+                Course course_to_pass = adapter.getItem(position);
+                int course_id_to_pass = course_to_pass.getCourseId();
 
-                bundles.putInt("group_id_to_pass",group_id_to_pass);
+                bundles.putInt("course_id_to_pass", course_id_to_pass);
 
-                group_profile_fragment.setArguments(bundles);
-                ft.replace( ((ViewGroup) (getView().getParent())).getId(), group_profile_fragment);
+                course_profile_fragment.setArguments(bundles);
+                ft.replace( ((ViewGroup) (getView().getParent())).getId(), course_profile_fragment);
                 ft.addToBackStack(null);
                 ft.commit();
+
+                Log.d("Button", "Clicked");
             }
         });
 
@@ -169,6 +153,8 @@ public class CourseProfileFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

@@ -1,20 +1,15 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".GroupProfileFragment">
 
     <include layout="@layout/fragment_map"/>
-    <!--
-    <fragment
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/map"
+    <ListView
+        android:id="@+id/group_user_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        map:cameraZoom="13"
-        map:mapType="normal"
-        map:liteMode="true"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"></ListView>
 
-    -->
-</FrameLayout>
+</LinearLayout>
