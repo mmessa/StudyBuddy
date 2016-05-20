@@ -1,6 +1,9 @@
 package dao;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mattmessa on 5/3/16.
@@ -11,6 +14,7 @@ public class Group {
     private int courseId;
     private String name;
     private List userIds;
+    private Map<Integer,LatLng> userLatLngs;
 
     public Group(){
 
@@ -58,5 +62,13 @@ public class Group {
 
     public void setUserIds(List userIds) {
         this.userIds = userIds;
+    }
+
+    public void setUserLatLng(Map<Integer,LatLng> latlngs) {
+        this.userLatLngs = latlngs;
+    }
+
+    public Map<Integer, LatLng> getUserLatLng(){
+        return this.userLatLngs;
     }
 }
